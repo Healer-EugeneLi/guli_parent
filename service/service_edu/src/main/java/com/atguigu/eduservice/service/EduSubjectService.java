@@ -1,8 +1,11 @@
 package com.atguigu.eduservice.service;
 
 import com.atguigu.eduservice.entity.EduSubject;
+import com.atguigu.eduservice.entity.subject.OneSubject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * <p>
@@ -20,4 +23,10 @@ public interface EduSubjectService extends IService<EduSubject> {
      * @param subjectService
      */
     void addSubject(MultipartFile file,EduSubjectService subjectService);
+
+    /**
+     * 获取课程列表的信息
+     * @return
+     */
+    List<OneSubject> getAllOneTwoSubject();
 }
