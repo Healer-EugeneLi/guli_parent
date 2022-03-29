@@ -20,6 +20,7 @@ public class CoursePublishVo implements Serializable {
     private String title;//课程名
     private String cover;//课程封面
     private Integer lessonNum;//课程数
+    private String teacherName;//老师名字
     private String subjectLevelOne;//一级分类
     private String subjectLevelTwo;//二级分类
     private String price;//课程价格
