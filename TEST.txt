@@ -4,8 +4,12 @@ netstat -aon|findstr "8080"
 
 taskkill /pid 4136-t -f
 
+//阿里云视频请求api 阿里云提供固定的地址 只需要调用这个地址，向地址传递参数，实现功能
+//SDK sdk对api的方式进行调用 方便使用
+http(s)://vod.cn-shanghai.aliyuncs.com/
 
-
+//在数据库中存的是视频的id而不是存视频的地址，因为有些视频会进行加密，如果直接使用地址，那么这些视频无法播放
+拿到id之后 可以拿到视频的凭证 通过凭证可以播放加密视频 不加密视频
 SELECT ec.title,ec.price,ec.lesson_num,
 			et.`name`,
 			ecd.description ,
