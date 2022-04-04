@@ -25,8 +25,8 @@ public class TestVod {
      * 根据视频id获取视频播放地址
      */
     public static void getVideoUrl(){
-        String accessKid="LTAI5tHasvN5cYCEsh1uYfpe";
-        String accessKeySecret="wp7N0o4iYa0PZ4JPG2pcRs968S27sZ";
+        String accessKid="";
+        String accessKeySecret="";
 
         try {
             //1.创建初始化话对象
@@ -62,8 +62,8 @@ public class TestVod {
      * 得到播放凭证
      */
     public static void getPlayAuth() {
-        String accessKid="LTAI5tHasvN5cYCEsh1uYfpe";
-        String accessKeySecret="wp7N0o4iYa0PZ4JPG2pcRs968S27sZ";
+        String accessKid="";
+        String accessKeySecret="";
 
 
         try {
@@ -90,8 +90,8 @@ public class TestVod {
 
     public static void uploadVideo(){
 
-        String accessKeyId="LTAI5tHasvN5cYCEsh1uYfpe";
-        String accessKeySecret="wp7N0o4iYa0PZ4JPG2pcRs968S27sZ";
+        String accessKeyId="";
+        String accessKeySecret="";
         //1.音视频上传-本地文件上传
         //视频标题(必选)
         String title = "6 - What If I Want to Move Fasterk - upload by sdk";
