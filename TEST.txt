@@ -1,8 +1,8 @@
 #关闭某个端口
 
-netstat -aon|findstr "8080"
+netstat -aon|findstr "81"
 
-taskkill /pid 4136-t -f
+taskkill /pid 4136 -t -f
 
 //阿里云视频请求api 阿里云提供固定的地址 只需要调用这个地址，向地址传递参数，实现功能
 //SDK sdk对api的方式进行调用 方便使用

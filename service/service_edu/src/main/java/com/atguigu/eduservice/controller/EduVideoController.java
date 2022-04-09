@@ -2,11 +2,13 @@ package com.atguigu.eduservice.controller;
 
 
 import com.atguigu.commonutils.R;
+import com.atguigu.eduservice.client.VodClient;
 import com.atguigu.eduservice.entity.EduVideo;
 import com.atguigu.eduservice.service.EduVideoService;
 import com.atguigu.servicebase.exceptionhandler.GuliException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,12 +27,15 @@ public class EduVideoController {
     @Autowired
     private EduVideoService eduVideoService;
 
+    @Autowired
+    private VodClient vodClient;//注入 vod服务需要接口
+
 
     //添加小节
     @ApiOperation("添加小节")
     @PostMapping("addVideo")
     public R addVideo(@RequestBody EduVideo eduVideo){
-
+        System.out.println("eduVideo"+eduVideo.toString());
         boolean save = eduVideoService.save(eduVideo);
         if (save==false)
             throw new GuliException(20001,"添加小节失败");
@@ -54,7 +59,19 @@ public class EduVideoController {
     @DeleteMapping("{id}")
     public R deleteVideo(@PathVariable String id){
 
+        //根据小节id获取videoId
+        EduVideo eduVideo = eduVideoService.getById(id);
+        String videoId = eduVideo.getVideoSourceId();
+        //如果videoId不为空 通过远程调用service-vod的服务 删除视频
+        if (!StringUtils.isEmpty(videoId)){
+            System.out.println("删除小节：id"+id+"  videoId:"+videoId);
+            R result = vodClient.deleteVideo(videoId);
+            if (result.getCode()==20001){
+                throw new GuliException(20001,"删除视频失败，熔断器");
+            }
+        }
 
+        //再删除小节
         boolean b = eduVideoService.removeById(id);
         if (b==false)
             throw new GuliException(20001,"删除小节失败");

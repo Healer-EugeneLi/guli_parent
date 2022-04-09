@@ -3,14 +3,21 @@ package com.atguigu.vod.service.impl;
 import com.aliyun.vod.upload.impl.UploadVideoImpl;
 import com.aliyun.vod.upload.req.UploadStreamRequest;
 import com.aliyun.vod.upload.resp.UploadStreamResponse;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.vod.model.v20170321.DeleteVideoRequest;
+import com.aliyuncs.vod.model.v20170321.DeleteVideoResponse;
 import com.atguigu.servicebase.exceptionhandler.GuliException;
 import com.atguigu.vod.service.VodService;
 import com.atguigu.vod.utils.ConstantPropertiesUtil;
+import com.atguigu.vod.utils.InitVodClient;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @ClassName: VodServiceImpl
@@ -59,5 +66,56 @@ public class VodServiceImpl implements VodService {
         }
 
         return videoId;
+    }
+
+    /**
+     * 删除video
+     *
+     * @param videoId
+     */
+    @Override
+    public void deleteVideoByVideoId(String videoId) {
+
+        System.out.println("videoId"+videoId);
+        //初始化对象
+        try {
+            DefaultAcsClient client = InitVodClient.initVodClient(ConstantPropertiesUtil.ACCESS_KEY_ID, ConstantPropertiesUtil.ACCESS_KEY_SECRET);
+
+            DeleteVideoRequest request=new DeleteVideoRequest();
+            request.setVideoIds(videoId);
+
+            DeleteVideoResponse response = client.getAcsResponse(request);
+            System.out.print("RequestId = " + response.getRequestId() + "\n");
+        } catch (ClientException e) {
+            e.printStackTrace();
+            throw new GuliException(20001,"删除视频失败");
+        }
+
+    }
+
+    /**
+     * 根据videoId 列表进行批量删除
+     *
+     * @param videoList
+     */
+    @Override
+    public void deleteBatch(List<String> videoList) {
+
+        //初始化对象
+        try {
+            DefaultAcsClient client = InitVodClient.initVodClient(ConstantPropertiesUtil.ACCESS_KEY_ID, ConstantPropertiesUtil.ACCESS_KEY_SECRET);
+
+            DeleteVideoRequest request=new DeleteVideoRequest();
+
+            //通过videoList构造批量删除的videoId 字符串
+            String videoIds = StringUtils.join(videoList.toArray(), ",");
+            request.setVideoIds(videoIds);
+            System.out.println("批量删除:videoIds:"+videoIds);
+            DeleteVideoResponse response = client.getAcsResponse(request);
+            System.out.print("RequestId = " + response.getRequestId() + "\n");
+        } catch (ClientException e) {
+            e.printStackTrace();
+            throw new GuliException(20001,"删除视频失败");
+        }
     }
 }

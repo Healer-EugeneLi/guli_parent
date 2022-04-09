@@ -1,11 +1,15 @@
 package com.atguigu.eduservice.service;
 
 import com.atguigu.eduservice.entity.EduCourse;
+import com.atguigu.eduservice.entity.frontvo.CourseFrontVo;
+import com.atguigu.eduservice.entity.frontvo.CourseWebVo;
 import com.atguigu.eduservice.entity.vo.CourseInfo;
 import com.atguigu.eduservice.entity.vo.CoursePublishVo;
 import com.atguigu.eduservice.entity.vo.CourseQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -56,4 +60,19 @@ public interface EduCourseService extends IService<EduCourse> {
      * @return
      */
     boolean removeCourseById(String courseId);
+
+    /**
+     * 待条件进行分页查询课程
+     * @param coursePage
+     * @param courseFrontVo
+     * @return
+     */
+    Map<String, Object> getCourseFrontList(Page<EduCourse> coursePage, CourseFrontVo courseFrontVo);
+
+    /**
+     * 通过courseId 获取前端显示的详细的课程信息
+     * @param courseId
+     * @return
+     */
+    CourseWebVo getFrontCourseDetail(String courseId);
 }

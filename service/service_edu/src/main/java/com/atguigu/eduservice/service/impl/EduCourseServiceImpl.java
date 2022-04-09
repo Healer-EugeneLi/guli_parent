@@ -3,6 +3,9 @@ package com.atguigu.eduservice.service.impl;
 import com.atguigu.eduservice.entity.EduChapter;
 import com.atguigu.eduservice.entity.EduCourse;
 import com.atguigu.eduservice.entity.EduCourseDescription;
+import com.atguigu.eduservice.entity.EduTeacher;
+import com.atguigu.eduservice.entity.frontvo.CourseFrontVo;
+import com.atguigu.eduservice.entity.frontvo.CourseWebVo;
 import com.atguigu.eduservice.entity.vo.CourseInfo;
 import com.atguigu.eduservice.entity.vo.CoursePublishVo;
 import com.atguigu.eduservice.entity.vo.CourseQuery;
@@ -19,6 +22,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -202,6 +209,74 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
 
         Integer delete = baseMapper.deleteById(courseId);
         return delete!=null&&delete>0;
+    }
+
+    /**
+     * 待条件进行分页查询课程
+     *
+     * @param coursePage
+     * @param courseFrontVo
+     * @return
+     */
+    @Override
+    public Map<String, Object> getCourseFrontList(Page<EduCourse> coursePage, CourseFrontVo courseFrontVo) {
+
+        QueryWrapper<EduCourse> wrapper=new QueryWrapper<>();
+
+        //查询一级id
+        if (!StringUtils.isEmpty(courseFrontVo.getSubjectParentId())){
+            wrapper.eq("subject_parent_id",courseFrontVo.getSubjectParentId());
+        }
+        //查询二级id
+        if (!StringUtils.isEmpty(courseFrontVo.getSubjectId())){
+            wrapper.eq("subject_id",courseFrontVo.getSubjectId());
+        }
+        //销量降序
+        if (!StringUtils.isEmpty(courseFrontVo.getBuyCountSort())){
+            wrapper.orderByDesc("buy_count");
+        }
+        //价格降序
+        if (!StringUtils.isEmpty(courseFrontVo.getPriceSort())){
+            wrapper.orderByDesc("price");
+        }
+        //创建时间降序
+        if (!StringUtils.isEmpty(courseFrontVo.getGmtCreateSort())){
+            wrapper.orderByDesc("gmt_create");
+        }
+        baseMapper.selectPage(coursePage,wrapper);
+
+        //将返回结果进行包装
+        List<EduCourse> records = coursePage.getRecords();
+        long total = coursePage.getTotal();
+        long size = coursePage.getSize();
+        long current = coursePage.getCurrent();
+        long pages = coursePage.getPages();
+        boolean hasNext = coursePage.hasNext();
+        boolean hasPrevious = coursePage.hasPrevious();
+
+        Map<String,Object> map=new HashMap<>();
+        map.put("records",records);
+        map.put("total",total);
+        map.put("size",size);
+        map.put("current",current);
+        map.put("pages",pages);
+        map.put("hasNext",hasNext);
+        map.put("hasPrevious",hasPrevious);
+        return map;
+
+    }
+
+    /**
+     * 通过courseId 获取前端显示的详细的课程信息
+     *
+     * @param courseId
+     * @return
+     */
+    @Override
+    public CourseWebVo getFrontCourseDetail(String courseId) {
+
+        CourseWebVo courseWebVo=baseMapper.getCourseWebVo(courseId);
+        return courseWebVo;
     }
 
 
