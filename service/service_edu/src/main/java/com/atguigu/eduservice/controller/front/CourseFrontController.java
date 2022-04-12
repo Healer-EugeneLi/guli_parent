@@ -1,6 +1,9 @@
 package com.atguigu.eduservice.controller.front;
 
+import com.atguigu.commonutils.JwtUtils;
 import com.atguigu.commonutils.R;
+import com.atguigu.commonutils.ordervo.CourseWebVoOrder;
+import com.atguigu.eduservice.client.OrderClient;
 import com.atguigu.eduservice.entity.EduCourse;
 import com.atguigu.eduservice.entity.chapter.ChapterVo;
 import com.atguigu.eduservice.entity.frontvo.CourseFrontVo;
@@ -8,10 +11,13 @@ import com.atguigu.eduservice.entity.frontvo.CourseWebVo;
 import com.atguigu.eduservice.service.EduChapterService;
 import com.atguigu.eduservice.service.EduCourseService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +32,10 @@ import java.util.Map;
 @RequestMapping("/eduservice/coursefront")
 @CrossOrigin
 public class CourseFrontController {
+
+
+    @Autowired
+    private OrderClient orderClient;
 
     @Autowired
     private EduCourseService courseService;
@@ -46,7 +56,7 @@ public class CourseFrontController {
 
     @ApiOperation("根据courseId获取课程详情")
     @GetMapping("getCourseInfo/{courseId}")
-    public R getCourseInfo(@PathVariable String courseId){
+    public R getCourseInfo(@PathVariable String courseId, HttpServletRequest request){
 
 
         //1.获取前端显示的对应的课程详情包装信息
@@ -56,6 +66,22 @@ public class CourseFrontController {
         //2.获取对应的小节章节
         List<ChapterVo> chapterVoList = chapterService.getChapterByCourseId(courseId);
 
-        return R.ok().data("courseWebVo",courseWebVo).data("chapterVoList",chapterVoList);
+        //3.远程调用 判断课程是否被购买
+        boolean buyCourse = orderClient.isBuyCourse(JwtUtils.getMemberIdByJwtToken(request), courseId);
+
+
+        return R.ok().data("courseWebVo",courseWebVo).data("chapterVoList",chapterVoList).data("isBuy",buyCourse);
+    }
+
+
+    @ApiOperation("根据课程id获取课程详情")
+    @GetMapping("getCourseWebVoOrder/{courseId}")
+    public CourseWebVoOrder getCourseWebVoOrder(@PathVariable String courseId){
+
+        CourseWebVo courseWebVo = courseService.getFrontCourseDetail(courseId);
+        CourseWebVoOrder courseWebVoOrder=new CourseWebVoOrder();
+        BeanUtils.copyProperties(courseWebVo,courseWebVoOrder);
+        System.out.println("课程信息 "+ courseWebVoOrder);
+        return courseWebVoOrder;
     }
 }

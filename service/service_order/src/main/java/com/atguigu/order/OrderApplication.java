@@ -1,5 +1,6 @@
-package com.atguigu.educenter;
+package com.atguigu.order;
 
+import com.atguigu.order.controller.OrderController;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,22 +9,20 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * @ClassName: UCenterApplication
+ * @ClassName: OrderApplication
  * @Description:
  * @Author EugeneLi
- * @Date: 2022/4/6
- * @Time: 20:23
+ * @Date: 2022/4/12
+ * @Time: 15:39
  */
-
 @SpringBootApplication
-@ComponentScan({"com.atguigu"})
-@MapperScan("com.atguigu.educenter.mapper")
-@EnableDiscoveryClient//nacos中心注册 运行被调用
-public class UCenterApplication {
-
+@ComponentScan(basePackages ={"com.atguigu"})
+@MapperScan("com.atguigu.order.mapper")
+@EnableDiscoveryClient//nacos注册
+@EnableFeignClients//Feign
+public class OrderApplication {
     public static void main(String[] args) {
 
-        SpringApplication.run(UCenterApplication.class,args);
-
+        SpringApplication.run(OrderApplication.class,args);
     }
 }

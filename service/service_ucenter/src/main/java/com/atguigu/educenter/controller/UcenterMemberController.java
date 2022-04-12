@@ -3,12 +3,15 @@ package com.atguigu.educenter.controller;
 
 import com.atguigu.commonutils.JwtUtils;
 import com.atguigu.commonutils.R;
+import com.atguigu.commonutils.ordervo.UcenterMemberOrder;
+import com.atguigu.educenter.entity.UcenterMember;
 import com.atguigu.educenter.entity.vo.LoginInfoVo;
 import com.atguigu.educenter.entity.vo.LoginVo;
 import com.atguigu.educenter.entity.vo.RegisterVo;
 import com.atguigu.educenter.service.UcenterMemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +60,22 @@ public class UcenterMemberController {
         LoginInfoVo loginInfoVo=memberService.getLoginVoInfo(memberId);
         System.out.println(loginInfoVo.toString());
         return R.ok().data("loginInfoVo",loginInfoVo);
+    }
+
+
+    @ApiOperation("根据token字符串获取用户信息")
+    @GetMapping("getUserInfo/{id}")
+    public UcenterMemberOrder getInfo(@PathVariable String id){
+
+        UcenterMember member = memberService.getById(id);
+        System.out.println("id "+id);
+        System.out.println("UcenterMember"+ member);
+        //为了返回一个可以在别的service使用的实体类 构建一个UcenterMemberOrder
+        UcenterMemberOrder ucenterMemberOrder=new UcenterMemberOrder();
+        BeanUtils.copyProperties(member,ucenterMemberOrder);
+        System.out.println("用户信息"+member);
+        return ucenterMemberOrder;
+
     }
 
 }
